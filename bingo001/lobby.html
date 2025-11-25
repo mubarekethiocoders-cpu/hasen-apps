@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bingo Game Lobby</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+    <style>
+        /* Dark Theme Variables */
+        :root {
+            --primary: #33aaff;
+            /* A bright, appealing blue */
+            --secondary: #ffdd44;
+            /* A warm, golden yellow */
+            --background-dark: #1a1a2e;
+            --background-dark2: #2c2c4da8;
+            /* Very dark background */
+            --background-medium: #1f4068;
+            /* Slightly lighter for cards/sections */
+            --text-light: #e0e0e0;
+            --text-dark: #333;
+            /* For text on yellow buttons */
+            --text-accent: var(--secondary);
+            --card-border: 1px solid rgba(165, 25, 15, 0.1);
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            --button-hover-primary: #2196F3;
+            /* Darker blue */
+            --button-hover-secondary: #ffaa00;
+            /* Darker yellow */
+            --called-cell-bg: #1b193bbd;
+            /* Darker blue for called cells */
+            --last-called-bg: #2e4a6d;
+            /* Background for the last called number box */
+        }
+
+        body {
+            /*  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; */
+            font-family: 'Inter', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            margin: 0;
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            font-size: 0.8em;
+            /* Smaller title */
+            color: var(--primary);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 8px rgba(51, 170, 255, 0.4);
+        }
+
+        #message {
+            margin: 5px auto 10px auto;
+            /* More space below */
+            padding: 6px 12px;
+            background-color: var(--background-medium);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: var(--card-border);
+            font-weight: bold;
+            width: 90%;
+            max-width: 350px;
+            font-size: 0.7em;
+            /*   */
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* --- Called Number Display --- */
+        #called-number-container {
+            margin: 0 auto 10px auto;
+            /* Move closer to the board */
+            padding: 6px 10px;
+            /* Smaller padding */
+            background-color: var(--background-medium);
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            border: var(--card-border);
+            width: 92%;
+            max-width: 350px;
+        }
+
+        #called-number-label {
+            font-size: 0.7em;
+            /* Smaller label */
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3px;
+        }
+
+        #called-number {
+            font-size: 1.0em;
+            padding: 8px;
+            /* Smaller number to make space */
+            color: var(--secondary);
+            font-weight: bold;
+            display: inline-block;
+            transition: transform 0.3s, color 0.3s;
+            line-height: 1;
+            /* Adjust line height to reduce vertical space */
+            background-color: #e96c06;
+            color: white;
+            border-radius: 49%;
+        }
+
+        /* --- Bingo Board --- */
+        #bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            width: 95vw;
+            /* Use viewport width for better mobile fit */
+            max-width: 350px;
+            /* Max width for larger screens */
+            margin: 0 auto 14px auto;
+            border: 1px solid rgb(6, 89, 212, 0.2);
+            padding: 2px;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1em;
+            /* Slightly smaller font for numbers */
+            font-weight: bold;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 4px;
+            background-color: var(--background-dark2);
+            color: var(--text-light);
+            cursor: pointer;
+            transition: background-color 0.2s, color 0.2s, transform 0.1s;
+            margin: 1px;
+        }
+
+        .bingo-cell:active {
+            transform: scale(0.95);
+        }
+
+        .bingo-cell.called {
+            background-color: var(--called-cell-bg);
+            color: rgba(255, 255, 255, 0.87);
+            border-color: #2a4c8a;
+            position: relative;
+        }
+
+        .bingo-cell.called::after {
+            content: 'X';
+            position: absolute;
+            font-size: 1.8em;
+            /* Smaller X */
+            color: rgba(255, 255, 255, 0.3);
+            line-height: 1;
+        }
+
+        /* --- Buttons --- */
+        .game-controls {
+            margin-bottom: 20px;
+        }
+
+        .game-controls button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            box-shadow: var(--shadow);
+        }
+
+        .game-controls button:hover {
+            background-color: var(--button-hover-primary);
+            transform: translateY(-2px);
+        }
+
+        .game-controls button:active {
+            transform: translateY(0);
+        }
+
+        #claim-bingo-button {
+            background-color: var(--secondary);
+            color: var(--text-dark);
+            /* Darker text for contrast on yellow */
+        }
+
+        #claim-bingo-button:hover {
+            background-color: var(--button-hover-secondary);
+        }
+
+        /* --- Called Numbers List --- */
+        #called-numbers-list-container {
+            margin-top: 10px;
+            padding: 15px;
+            background-color: var(--background-medium);
+            border-radius: 10px;
+            border: var(--card-border);
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+            box-shadow: var(--shadow);
+        }
+
+        #called-numbers-list-container h3 {
+            margin: 0 0 12px 0;
+            color: var(--text-light);
+            font-size: 1.1em;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 8px;
+        }
+
+        #called-numbers-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px;
+            padding: 0;
+        }
+
+        .called-list-item {
+            background-color: #2e4a6d;
+            color: var(--text-light);
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            font-weight: normal;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🎲 Bingo Game</h1>
+
+    <div id="message">Loading lobby...</div>
+
+    <div id="called-number-container">
+        <div id="called-number-label">Last Number Called:</div>
+        <div id="called-number">—</div>
+    </div>
+
+    <div id="bingo-board">
+        Loading board...
+    </div>
+
+    <div class="game-controls">
+        <button id="call-number-button" style="display: none;">Call Next Number</button>
+        <button id="claim-bingo-button" style="display: none;">Claim Bingo!</button>
+    </div>
+
+    <div id="called-numbers-list-container">
+        <h3>Called History:</h3>
+        <div id="called-numbers-list">
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,2017 @@
+Sure! Let's break down the key concepts of Firebase Web with JavaScript, focusing on Firebase Authentication and Firestore. We'll cover this in parts for clarity.
+=================================================================
+=================================================================
+Page I
+=================================================================
+=================================================================
+### Part 1: Introduction to Firebase
+
+#### What is Firebase?
+Firebase is a platform developed by Google to help developers build apps. It offers various services, including real-time databases, authentication, cloud storage, and more.
+
+#### Setting Up Firebase for Web
+
+1. **Create a Firebase Project:**
+   - Go to the [Firebase Console](https://console.firebase.google.com/).
+   - Click on "Add project" and follow the prompts.
+
+2. **Register Your App:**
+   - In your Firebase project, click on "Web" to register your app.
+   - Copy the Firebase config object that will be used to initialize Firebase in your app.
+
+3. **Add Firebase SDK:**
+   Include the Firebase libraries in your HTML:
+
+   ```html
+   <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-app.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-auth.js"></script>
+   <script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-firestore.js"></script>
+   ```
+
+4. **Initialize Firebase:**
+
+   ```javascript
+   // Your web app's Firebase configuration
+   const firebaseConfig = {
+       apiKey: "YOUR_API_KEY",
+       authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+       projectId: "YOUR_PROJECT_ID",
+       storageBucket: "YOUR_PROJECT_ID.appspot.com",
+       messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+       appId: "YOUR_APP_ID"
+   };
+
+   // Initialize Firebase
+   const app = firebase.initializeApp(firebaseConfig);
+   ```
+
+### Part 2: Firebase Authentication
+
+#### Overview of Firebase Authentication
+Firebase Authentication provides a simple way to authenticate users using various sign-in methods (email/password, social media login, etc.).
+
+#### 1. Email/Password Authentication
+
+- **Sign Up a User:**
+
+   ```javascript
+   const auth = firebase.auth();
+
+   const signUp = (email, password) => {
+       auth.createUserWithEmailAndPassword(email, password)
+           .then((userCredential) => {
+               console.log("User signed up:", userCredential.user);
+           })
+           .catch((error) => {
+               console.error("Error signing up:", error);
+           });
+   };
+   ```
+
+- **Sign In a User:**
+
+   ```javascript
+   const signIn = (email, password) => {
+       auth.signInWithEmailAndPassword(email, password)
+           .then((userCredential) => {
+               console.log("User signed in:", userCredential.user);
+           })
+           .catch((error) => {
+               console.error("Error signing in:", error);
+           });
+   };
+   ```
+
+- **Sign Out a User:**
+
+   ```javascript
+   const signOut = () => {
+       auth.signOut().then(() => {
+           console.log("User signed out");
+       }).catch((error) => {
+           console.error("Error signing out:", error);
+       });
+   };
+   ```
+
+#### 2. Monitor Authentication State
+
+You can listen to authentication state changes:
+
+```javascript
+auth.onAuthStateChanged((user) => {
+   if (user) {
+       console.log("User is signed in:", user);
+   } else {
+       console.log("No user is signed in.");
+   }
+});
+```
+
+### Part 3: Firestore Database
+
+#### Overview of Firestore
+Firestore is Firebase's real-time NoSQL database, allowing you to store and sync data between your clients and the database.
+
+#### 1. Setting up Firestore
+
+- **Get a Firestore Reference:**
+
+   ```javascript
+   const db = firebase.firestore();
+   ```
+
+#### 2. Adding Data
+
+- **Add a Document:**
+
+   ```javascript
+   const addDocument = (collectionName, docData) => {
+       db.collection(collectionName).add(docData)
+           .then((docRef) => {
+               console.log("Document written with ID:", docRef.id);
+           })
+           .catch((error) => {
+               console.error("Error adding document:", error);
+           });
+   };
+   ```
+
+- **Set a Document:**
+
+   ```javascript
+   const setDocument = (collectionName, docId, docData) => {
+       db.collection(collectionName).doc(docId).set(docData)
+           .then(() => {
+               console.log("Document successfully written!");
+           })
+           .catch((error) => {
+               console.error("Error writing document:", error);
+           });
+   };
+   ```
+
+#### 3. Reading Data
+
+- **Get a Collection:**
+
+   ```javascript
+   const getCollection = (collectionName) => {
+       db.collection(collectionName).get()
+           .then((querySnapshot) => {
+               querySnapshot.forEach((doc) => {
+                   console.log(`${doc.id} =>`, doc.data());
+               });
+           })
+           .catch((error) => {
+               console.error("Error getting documents:", error);
+           });
+   };
+   ```
+
+- **Get a Single Document:**
+
+   ```javascript
+   const getDocument = (collectionName, docId) => {
+       db.collection(collectionName).doc(docId).get()
+           .then((doc) => {
+               if (doc.exists) {
+                   console.log("Document data:", doc.data());
+               } else {
+                   console.log("No such document!");
+               }
+           })
+           .catch((error) => {
+               console.error("Error getting document:", error);
+           });
+   };
+   ```
+
+### Next Steps
+
+In the next parts, we'll cover:
+
+- Update and delete operations in Firestore.
+- Advanced querying capabilities.
+- Using Firebase Storage for file uploads.
+- Deploying your Firebase app.
+
+Feel free to ask questions or request further details on specific topics!
+
+=================================================================
+=================================================================
+Page II
+=================================================================
+=================================================================
+Great! Let's continue with our Firebase Web tutorial in JavaScript. In this part, we'll cover updating and deleting operations in Firestore, as well as advanced querying capabilities.
+
+### Part 4: Updating and Deleting Data in Firestore
+
+#### 1. Updating a Document
+
+To update an existing document in Firestore, use the `update()` method:
+
+```javascript
+const updateDocument = (collectionName, docId, updatedData) => {
+    db.collection(collectionName).doc(docId).update(updatedData)
+        .then(() => {
+            console.log("Document successfully updated!");
+        })
+        .catch((error) => {
+            console.error("Error updating document:", error);
+        });
+};
+
+// Example Usage
+updateDocument("users", "USER_DOC_ID", { age: 30 });
+```
+
+#### 2. Deleting a Document
+
+To delete a document, use the `delete()` method:
+
+```javascript
+const deleteDocument = (collectionName, docId) => {
+    db.collection(collectionName).doc(docId).delete()
+        .then(() => {
+            console.log("Document successfully deleted!");
+        })
+        .catch((error) => {
+            console.error("Error removing document:", error);
+        });
+};
+
+// Example Usage
+deleteDocument("users", "USER_DOC_ID");
+```
+
+### Part 5: Advanced Querying Capabilities
+
+Firestore supports a variety of querying options. Here are some common examples:
+
+#### 1. Querying with Conditions
+
+You can query documents based on certain conditions using `where()`:
+
+```javascript
+const getUsersByAge = (age) => {
+    db.collection("users").where("age", ">", age).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting documents:", error);
+        });
+};
+
+// Example Usage
+getUsersByAge(25);
+```
+
+#### 2. Ordering Results
+
+You can order query results using the `orderBy()` method:
+
+```javascript
+const getOrderedUsers = () => {
+    db.collection("users").orderBy("age").get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting documents:", error);
+        });
+};
+
+// Example Usage
+getOrderedUsers();
+```
+
+#### 3. Limiting Results
+
+To limit the number of documents returned by a query, use the `limit()` method:
+
+```javascript
+const getLimitedUsers = (limit) => {
+    db.collection("users").limit(limit).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting documents:", error);
+        });
+};
+
+// Example Usage
+getLimitedUsers(5);
+```
+
+### Part 6: Using Firebase Storage for File Uploads
+
+Firebase Storage is used for storing and serving user-generated content such as images and videos. Here’s how to upload files:
+
+#### 1. Setting Up Firebase Storage
+
+Make sure you add the Firebase Storage SDK:
+
+```html
+<script src="https://www.gstatic.com/firebasejs/9.9.0/firebase-storage.js"></script>
+```
+
+And initialize it:
+
+```javascript
+const storage = firebase.storage();
+```
+
+#### 2. Uploading Files
+
+To upload files, use the `storage.ref()` method and `put()`:
+
+```javascript
+const uploadFile = (file) => {
+    const storageRef = storage.ref(`uploads/${file.name}`);
+    storageRef.put(file).then((snapshot) => {
+        console.log("File uploaded successfully!", snapshot);
+    }).catch((error) => {
+        console.error("Error uploading file:", error);
+    });
+};
+
+// Example Usage (assuming you have a file input element)
+document.getElementById('fileInput').addEventListener('change', (event) => {
+    const file = event.target.files[0];
+    uploadFile(file);
+});
+```
+
+#### 3. Getting Download URLs
+
+After uploading files, you can get their download URLs:
+
+```javascript
+const getDownloadURL = (filePath) => {
+    const storageRef = storage.ref(filePath);
+    storageRef.getDownloadURL().then((url) => {
+        console.log("File available at", url);
+    }).catch((error) => {
+        console.error("Error getting file URL:", error);
+    });
+};
+
+// Example Usage
+getDownloadURL('uploads/your_file_name.jpg');
+```
+
+### Next Steps
+
+In the upcoming parts, we’ll cover:
+
+- Real-time updates with Firestore.
+- Error handling and security rules.
+- Deploying your Firebase app using Firebase Hosting.
+
+Let me know if you have any questions or if you want to delve deeper into a specific topic!
+
+
+=================================================================
+=================================================================
+Page III
+=================================================================
+=================================================================
+Sure! Let's continue with our Firebase Web tutorial, focusing on real-time updates with Firestore, error handling, security rules, and deploying your app.
+
+### Part 7: Real-Time Updates with Firestore
+
+Firestore allows you to listen for real-time updates to your data. This is useful for applications that need to reflect data changes instantly.
+
+#### 1. Listening for Real-Time Updates
+
+You can use the `onSnapshot()` method to listen for changes in a collection or document:
+
+- **Listening to a Collection:**
+
+```javascript
+const listenToCollection = (collectionName) => {
+    db.collection(collectionName).onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            console.log(`${doc.id} =>`, doc.data());
+        });
+    });
+};
+
+// Example Usage
+listenToCollection("users");
+```
+
+- **Listening to a Single Document:**
+
+```javascript
+const listenToDocument = (collectionName, docId) => {
+    db.collection(collectionName).doc(docId).onSnapshot((doc) => {
+        console.log(`${doc.id} =>`, doc.data());
+    });
+};
+
+// Example Usage
+listenToDocument("users", "USER_DOC_ID");
+```
+
+#### 2. Handling Unsubscribing
+
+To stop listening for updates, you can store the unsubscribe function returned by `onSnapshot()` and call it when needed:
+
+```javascript
+const unsubscribe = listenToCollection("users");
+
+// Later, when you want to stop listening
+unsubscribe();
+```
+
+### Part 8: Error Handling
+
+Error handling is crucial for a robust application. Firebase methods typically return promises, so you can use `.catch()` to handle errors as shown in previous examples.
+
+#### 1. Common Error Handling Practices
+
+- **Display User-Friendly Messages:** 
+  Instead of showing raw error messages, provide user-friendly feedback.
+
+```javascript
+const handleError = (error) => {
+    console.error(error);
+    alert("Something went wrong: " + error.message);
+};
+```
+
+- **Log Errors for Debugging:**
+
+You can log errors to an external logging service or backend for future analysis.
+
+### Part 9: Security Rules
+
+Setting up proper security rules is essential to protect your Firestore database. You can manage access controls using Firebase Security Rules.
+
+#### 1. Basic Firestore Rules
+
+Here’s a simple example of Firestore rules that allow users to read and write only their own data:
+
+```plaintext
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
+```
+
+#### 2. Testing Security Rules
+
+You can test your rules in the Firebase Console using the "Rules Playground" to ensure that they behave as expected.
+
+#### 3. Structuring Data
+
+Consider structuring your data to allow better access control. For example, nesting collections under user documents can help enforce user-specific permissions.
+
+### Part 10: Deploying Your Firebase App
+
+Firebase Hosting makes it easy to deploy web applications.
+
+#### 1. Install Firebase CLI
+
+First, make sure you have the Firebase CLI installed:
+
+```bash
+npm install -g firebase-tools
+```
+
+#### 2. Initialize Firebase Hosting
+
+Navigate to your project directory and run:
+
+```bash
+firebase init
+```
+
+Select "Hosting" and follow the prompts to set up your project. This will create a `firebase.json` file to configure hosting settings.
+
+#### 3. Build Your App (if applicable)
+
+If you're using a front-end framework, make sure to build your app for production. For example, with React, you'd run:
+
+```bash
+npm run build
+```
+
+#### 4. Deploy Your App
+
+Finally, deploy your app with:
+
+```bash
+firebase deploy
+```
+
+This command uploads your files to Firebase Hosting. Once completed, you’ll receive a hosting URL to access your app.
+
+### Next Steps
+
+In this tutorial, we've covered:
+
+- **Real-time updates** with Firestore
+- **Error handling** and user feedback
+- **Security rules** for data protection
+- **Deploying your app** with Firebase Hosting
+
+### Additional Topics (if you're interested)
+
+- **Using Firebase Functions** for backend logic.
+- **Implementing Analytics** to track user behavior.
+- **Testing and Debugging** your Firebase app.
+
+Feel free to ask any questions or request further clarification on any topics!
+
+
+=================================================================
+=================================================================
+Examples on firestore
+=================================================================
+=================================================================
+
+Sure! Here are 15 examples of common Firestore operations in JavaScript. These cover various functionalities, from basic CRUD (Create, Read, Update, Delete) operations to real-time listeners and advanced queries.
+
+### 1. Initialize Firestore
+
+```javascript
+const db = firebase.firestore();
+```
+
+### 2. Add a Document to a Collection
+
+```javascript
+const addUser = (userData) => {
+    db.collection("users").add(userData)
+        .then((docRef) => {
+            console.log("User added with ID:", docRef.id);
+        })
+        .catch((error) => {
+            console.error("Error adding user:", error);
+        });
+};
+
+// Example Usage
+addUser({ name: "Alice", age: 28 });
+```
+
+### 3. Get All Documents in a Collection
+
+```javascript
+const getAllUsers = () => {
+    db.collection("users").get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users:", error);
+        });
+};
+
+// Example Usage
+getAllUsers();
+```
+
+### 4. Get a Specific Document by ID
+
+```javascript
+const getUser = (userId) => {
+    db.collection("users").doc(userId).get()
+        .then((doc) => {
+            if (doc.exists) {
+                console.log("User data:", doc.data());
+            } else {
+                console.log("No such user!");
+            }
+        })
+        .catch((error) => {
+            console.error("Error getting user:", error);
+        });
+};
+
+// Example Usage
+getUser("USER_ID");
+```
+
+### 5. Update a Document
+
+```javascript
+const updateUser = (userId, updatedData) => {
+    db.collection("users").doc(userId).update(updatedData)
+        .then(() => {
+            console.log("User updated successfully!");
+        })
+        .catch((error) => {
+            console.error("Error updating user:", error);
+        });
+};
+
+// Example Usage
+updateUser("USER_ID", { age: 30 });
+```
+
+### 6. Delete a Document
+
+```javascript
+const deleteUser = (userId) => {
+    db.collection("users").doc(userId).delete()
+        .then(() => {
+            console.log("User deleted successfully!");
+        })
+        .catch((error) => {
+            console.error("Error deleting user:", error);
+        });
+};
+
+// Example Usage
+deleteUser("USER_ID");
+```
+
+### 7. Listen for Real-Time Updates to a Collection
+
+```javascript
+const listenToUsers = () => {
+    db.collection("users").onSnapshot((querySnapshot) => {
+        querySnapshot.forEach((doc) => {
+            console.log(`${doc.id} =>`, doc.data());
+        });
+    });
+};
+
+// Example Usage
+listenToUsers();
+```
+
+### 8. Query Documents with a Condition
+
+```javascript
+const getUsersAboveAge = (age) => {
+    db.collection("users").where("age", ">", age).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users:", error);
+        });
+};
+
+// Example Usage
+getUsersAboveAge(25);
+```
+
+### 9. Order Query Results
+
+```javascript
+const getOrderedUsers = () => {
+    db.collection("users").orderBy("age").get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users:", error);
+        });
+};
+
+// Example Usage
+getOrderedUsers();
+```
+
+### 10. Limit Query Results
+
+```javascript
+const getLimitedUsers = (limit) => {
+    db.collection("users").limit(limit).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users:", error);
+        });
+};
+
+// Example Usage
+getLimitedUsers(5);
+```
+
+### 11. Use Compound Queries
+
+```javascript
+const getUsersByBothCriteria = (age, city) => {
+    db.collection("users")
+        .where("age", ">", age)
+        .where("city", "==", city)
+        .get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users:", error);
+        });
+};
+
+// Example Usage
+getUsersByBothCriteria(25, "New York");
+```
+
+### 12. Get a Document's ID for Use in Other Operations
+
+```javascript
+const getUserIdAndData = (userEmail) => {
+    db.collection("users").where("email", "==", userEmail).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log("User ID:", doc.id, "=>", doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting user:", error);
+        });
+};
+
+// Example Usage
+getUserIdAndData("alice@mail.com");
+```
+
+### 13. Batch Writes
+
+Batch operations allow you to perform multiple write operations as a single unit, ensuring all succeed or fail together.
+
+```javascript
+const batchUpdate = (userId, updatedData) => {
+    const batch = db.batch();
+    const userRef = db.collection("users").doc(userId);
+    batch.update(userRef, updatedData);
+    
+    // Execute batch
+    batch.commit()
+        .then(() => {
+            console.log("Batch update successful!");
+        })
+        .catch((error) => {
+            console.error("Error in batch update:", error);
+        });
+};
+
+// Example Usage
+batchUpdate("USER_ID", { age: 31 });
+```
+
+### 14. Transaction Operations
+
+You can perform transactions for reading and writing to Firestore in a way that prevents conflicts.
+
+```javascript
+const updateUserAgeWithTransaction = (userId, newAge) => {
+    const userRef = db.collection("users").doc(userId);
+
+    db.runTransaction((transaction) => {
+        return transaction.get(userRef).then((doc) => {
+            if (!doc.exists) {
+                throw new Error("User does not exist!");
+            }
+            transaction.update(userRef, { age: newAge });
+        });
+    }).then(() => {
+        console.log("User age updated successfully in transaction!");
+    }).catch((error) => {
+        console.error("Transaction failed:", error);
+    });
+};
+
+// Example Usage
+updateUserAgeWithTransaction("USER_ID", 32);
+```
+
+### 15. Delete a Collection (Firestore doesn't support direct deletion of a collection, but you can do this manually)
+
+To completely clear a collection:
+
+```javascript
+const deleteCollection = (collectionName) => {
+    const collectionRef = db.collection(collectionName);
+    collectionRef.get().then((querySnapshot) => {
+        const batch = db.batch();
+        querySnapshot.forEach((doc) => {
+            batch.delete(doc.ref);
+        });
+        return batch.commit();
+    }).then(() => {
+        console.log("Collection deleted successfully!");
+    }).catch((error) => {
+        console.error("Error deleting collection:", error);
+    });
+};
+
+// Example Usage
+deleteCollection("users");
+```
+
+### Conclusion
+
+These 15 examples provide a comprehensive overview of how to interact with Firestore using JavaScript. You can modify these snippets to fit your application's needs and extend functionality as necessary.
+
+Certainly! Here are 30 more examples of using Firestore in JavaScript, covering various operations and functionalities:
+
+### 16. Create a Document with a Specific ID
+
+```javascript
+const createUserWithId = (userId, userData) => {
+    db.collection("users").doc(userId).set(userData)
+        .then(() => {
+            console.log("User created with specific ID:", userId);
+        })
+        .catch((error) => {
+            console.error("Error creating user:", error);
+        });
+};
+
+// Example Usage
+createUserWithId("SPECIFIC_USER_ID", { name: "Bob", age: 22 });
+```
+
+### 17. Get All Users in a Certain City
+
+```javascript
+const getUsersInCity = (city) => {
+    db.collection("users").where("city", "==", city).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users in city:", error);
+        });
+};
+
+// Example Usage
+getUsersInCity("Los Angeles");
+```
+
+### 18. Check If a Document Exists
+
+```javascript
+const checkUserExists = (userId) => {
+    db.collection("users").doc(userId).get()
+        .then((doc) => {
+            if (doc.exists) {
+                console.log("User exists:", doc.data());
+            } else {
+                console.log("No such user!");
+            }
+        })
+        .catch((error) => {
+            console.error("Error checking user existence:", error);
+        });
+};
+
+// Example Usage
+checkUserExists("USER_ID");
+```
+
+### 19. Get Users Created After a Certain Date
+
+```javascript
+const getUsersCreatedAfter = (date) => {
+    db.collection("users").where("createdAt", ">", date).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users:", error);
+        });
+};
+
+// Example Usage
+getUsersCreatedAfter(new Date("2022-01-01"));
+```
+
+### 20. Grouping Data for Reporting
+
+```javascript
+const getAgeGroupCounts = () => {
+    db.collection("users").get()
+        .then((querySnapshot) => {
+            const ageGroups = { '18-25': 0, '26-35': 0, '36-45': 0, '46+': 0 };
+
+            querySnapshot.forEach((doc) => {
+                const age = doc.data().age;
+                if (age >= 18 && age <= 25) ageGroups['18-25']++;
+                else if (age >= 26 && age <= 35) ageGroups['26-35']++;
+                else if (age >= 36 && age <= 45) ageGroups['36-45']++;
+                else if (age > 45) ageGroups['46+']++;
+            });
+            console.log("Age Group Counts:", ageGroups);
+        })
+        .catch((error) => {
+            console.error("Error getting users:", error);
+        });
+};
+
+// Example Usage
+getAgeGroupCounts();
+```
+
+### 21. Retrieve Unique Cities from Users Collection
+
+```javascript
+const getUniqueCities = () => {
+    db.collection("users").get()
+        .then((querySnapshot) => {
+            const cities = new Set();
+            querySnapshot.forEach((doc) => {
+                cities.add(doc.data().city);
+            });
+            console.log("Unique Cities:", Array.from(cities));
+        })
+        .catch((error) => {
+            console.error("Error getting cities:", error);
+        });
+};
+
+// Example Usage
+getUniqueCities();
+```
+
+### 22. Pagination of Query Results
+
+```javascript
+let lastVisible;
+
+const getPaginatedUsers = () => {
+    let query = db.collection("users").orderBy("createdAt").limit(5);
+    if (lastVisible) {
+        query = query.startAfter(lastVisible);
+    }
+    
+    query.get().then((querySnapshot) => {
+        lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+        
+        querySnapshot.forEach((doc) => {
+            console.log(`${doc.id} =>`, doc.data());
+        });
+    }).catch((error) => {
+        console.error("Error getting paginated users:", error);
+    });
+};
+
+// Example Usage
+getPaginatedUsers();
+```
+
+### 23. Bulk Write Operations with Batched Writes
+
+```javascript
+const bulkWriteUsers = (userList) => {
+    const batch = db.batch();
+    userList.forEach(user => {
+        const userRef = db.collection("users").doc(user.id);
+        batch.set(userRef, user.data);
+    });
+    
+    batch.commit().then(() => {
+        console.log("Bulk write completed successfully!");
+    }).catch((error) => {
+        console.error("Error in bulk write:", error);
+    });
+};
+
+// Example Usage
+bulkWriteUsers([
+    { id: "1", data: { name: "Charlie", age: 23 } },
+    { id: "2", data: { name: "David", age: 30 } },
+]);
+```
+
+### 24. Transaction for Reading and Writing
+
+```javascript
+const transferUserAge = (fromUserId, toUserId) => {
+    const fromUserRef = db.collection("users").doc(fromUserId);
+    const toUserRef = db.collection("users").doc(toUserId);
+
+    db.runTransaction(async (transaction) => {
+        const fromUserDoc = await transaction.get(fromUserRef);
+        const toUserDoc = await transaction.get(toUserRef);
+        
+        if (!fromUserDoc.exists || !toUserDoc.exists) {
+            throw new Error("One of the users does not exist!");
+        }
+
+        const fromAge = fromUserDoc.data().age;
+        transaction.update(toUserRef, { age: fromAge });
+    }).then(() => {
+        console.log("User age transferred successfully!");
+    }).catch((error) => {
+        console.error("Transaction failed:", error);
+    });
+};
+
+// Example Usage
+transferUserAge("FROM_USER_ID", "TO_USER_ID");
+```
+
+### 25. Use ArrayUnion for Adding to Arrays
+
+```javascript
+const addHobbyToUser = (userId, hobby) => {
+    const userRef = db.collection("users").doc(userId);
+    userRef.update({
+        hobbies: firebase.firestore.FieldValue.arrayUnion(hobby)
+    }).then(() => {
+        console.log("Hobby added successfully!");
+    }).catch((error) => {
+        console.error("Error adding hobby:", error);
+    });
+};
+
+// Example Usage
+addHobbyToUser("USER_ID", "Painting");
+```
+
+### 26. Use ArrayRemove for Removing from Arrays
+
+```javascript
+const removeHobbyFromUser = (userId, hobby) => {
+    const userRef = db.collection("users").doc(userId);
+    userRef.update({
+        hobbies: firebase.firestore.FieldValue.arrayRemove(hobby)
+    }).then(() => {
+        console.log("Hobby removed successfully!");
+    }).catch((error) => {
+        console.error("Error removing hobby:", error);
+    });
+};
+
+// Example Usage
+removeHobbyFromUser("USER_ID", "Painting");
+```
+
+### 27. Get User Details Alongside Posts (Sub-collection)
+
+```javascript
+const getUserWithPosts = (userId) => {
+    const userRef = db.collection("users").doc(userId);
+    userRef.get().then((userDoc) => {
+        if (userDoc.exists) {
+            console.log("User Data:", userDoc.data());
+            return userRef.collection("posts").get();
+        } else {
+            throw new Error("User not found");
+        }
+    }).then((postSnapshot) => {
+        postSnapshot.forEach((doc) => {
+            console.log("Post:", doc.data());
+        });
+    }).catch((error) => {
+        console.error("Error fetching user and posts:", error);
+    });
+};
+
+// Example Usage
+getUserWithPosts("USER_ID");
+```
+
+### 28. Batch Delete Documents Matching a Condition
+
+```javascript
+const deleteInactiveUsers = () => {
+    db.collection("users").where("active", "==", false).get()
+        .then((querySnapshot) => {
+            const batch = db.batch();
+            querySnapshot.forEach((doc) => {
+                batch.delete(doc.ref);
+            });
+            return batch.commit();
+        }).then(() => {
+            console.log("Inactive users deleted successfully!");
+        }).catch((error) => {
+            console.error("Error deleting inactive users:", error);
+        });
+};
+
+// Example Usage
+deleteInactiveUsers();
+```
+
+### 29. Get Average Age of Users
+
+```javascript
+const getAverageAge = () => {
+    db.collection("users").get()
+        .then((querySnapshot) => {
+            let totalAge = 0;
+            let count = 0;
+
+            querySnapshot.forEach((doc) => {
+                totalAge += doc.data().age;
+                count++;
+            });
+
+            const averageAge = totalAge / count;
+            console.log("Average Age of Users:", averageAge);
+        })
+        .catch((error) => {
+            console.error("Error calculating average age:", error);
+        });
+};
+
+// Example Usage
+getAverageAge();
+```
+
+### 30. Populate a Dropdown with Usernames
+
+```javascript
+const populateUsernamesDropdown = () => {
+    const dropdown = document.getElementById("usernamesDropdown");
+    db.collection("users").get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                const option = document.createElement("option");
+                option.value = doc.id;
+                option.textContent = doc.data().name;
+                dropdown.appendChild(option);
+            });
+        })
+        .catch((error) => {
+            console.error("Error populating usernames dropdown:", error);
+        });
+};
+
+// Example Usage
+populateUsernamesDropdown();
+```
+
+### 31. Create a User Profile with Image URL
+
+```javascript
+const createUserProfile = (userId, name, age, imageUrl) => {
+    db.collection("users").doc(userId).set({
+        name,
+        age,
+        profileImage: imageUrl
+    }).then(() => {
+        console.log("User profile created successfully!");
+    }).catch((error) => {
+        console.error("Error creating user profile:", error);
+    });
+};
+
+// Example Usage
+createUserProfile("USER_ID", "Emily", 29, "http://example.com/image.jpg");
+```
+
+### 32. Retrieve Users by Keyword Search
+
+```javascript
+const searchUsersByName = (keyword) => {
+    db.collection("users").orderBy("name").startAt(keyword).endAt(keyword + '\uf8ff').get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error searching users:", error);
+        });
+};
+
+// Example Usage
+searchUsersByName("Ali");
+```
+
+### 33. Enable Offline Data Persistence
+
+```javascript
+firebase.firestore().enablePersistence()
+    .then(() => {
+        console.log("Offline data persistence enabled!");
+    })
+    .catch((error) => {
+        console.error("Error enabling persistence:", error);
+    });
+```
+
+### 34. Update User with Firestore Functions
+
+```javascript
+const updateUserWithFunction = (userId, updateData) => {
+    const callableFunction = firebase.functions().httpsCallable('updateUser');
+    callableFunction({ userId, updateData })
+        .then((result) => {
+            console.log("User updated through function:", result.data);
+        })
+        .catch((error) => {
+            console.error("Error updating user through function:", error);
+        });
+};
+
+// Example Usage
+updateUserWithFunction("USER_ID", { age: 35 });
+```
+
+### 35. Get User's Last 5 Posts
+
+```javascript
+const getLastPosts = (userId) => {
+    db.collection("users").doc(userId).collection("posts")
+        .orderBy("createdAt", "desc").limit(5).get()
+        .then((postSnapshot) => {
+            postSnapshot.forEach((doc) => {
+                console.log("Post:", doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting last posts:", error);
+        });
+};
+
+// Example Usage
+getLastPosts("USER_ID");
+```
+
+### 36. Get Users with Nested Queries
+
+(Nested queries aren't supported directly, but you can filter them in your application logic.)
+
+```javascript
+const getUsersWithHobbies = (hobby) => {
+    db.collection("users").where("hobbies", "array-contains", hobby).get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting users with hobby:", error);
+        });
+};
+
+// Example Usage
+getUsersWithHobbies("Basketball");
+```
+
+### 37. Delete All Documents in a Collection Safely
+
+```javascript
+const deleteAllUsers = async () => {
+    const querySnapshot = await db.collection("users").get();
+    const batch = db.batch();
+    querySnapshot.forEach((doc) => {
+        batch.delete(doc.ref);
+    });
+    await batch.commit();
+    console.log("All users deleted successfully!");
+};
+
+// Example Usage
+deleteAllUsers();
+```
+
+### 38. Store Preferences in User Profile
+
+```javascript
+const updateUserPreferences = (userId, preferences) => {
+    db.collection("users").doc(userId).set({
+        preferences: preferences
+    }, { merge: true })
+    .then(() => {
+        console.log("User preferences updated!");
+    })
+    .catch((error) => {
+        console.error("Error updating preferences:", error);
+    });
+};
+
+// Example Usage
+updateUserPreferences("USER_ID", { theme: "dark", notifications: true });
+```
+
+### 39. Get Users by Custom Sorting Criteria
+
+```javascript
+const getSortedUsersByAgeAndName = () => {
+    db.collection("users").orderBy("age").orderBy("name").get()
+        .then((querySnapshot) => {
+            querySnapshot.forEach((doc) => {
+                console.log(`${doc.id} =>`, doc.data());
+            });
+        })
+        .catch((error) => {
+            console.error("Error getting sorted users:", error);
+        });
+};
+
+// Example Usage
+getSortedUsersByAgeAndName();
+```
+
+### 40. Update Multiple Fields Simultaneously
+
+```javascript
+const updateMultipleFields = (userId, fieldsToUpdate) => {
+    db.collection("users").doc(userId).update(fieldsToUpdate)
+        .then(() => {
+            console.log("Fields updated successfully!");
+        })
+        .catch((error) => {
+            console.error("Error updating fields:", error);
+        });
+};
+
+// Example Usage
+updateMultipleFields("USER_ID", { name: "Alice", age: 30 });
+```
+
+### Conclusion
+
+These 30 additional examples cover a wide range of functionalities in Firestore, including user management, data integrity, advanced queries, and efficient data handling patterns. You can adapt these examples to suit your specific application needs.
+
+If you have further questions or want to explore more specialized scenarios, feel free to ask!
+
+============================================================================================
+============================================================================================
+============================================================================================
+
+Okay, here are 15 examples of Firebase Authentication using email/password and 15 examples using Google Sign-in with JavaScript:
+
+### Firebase Authentication with Email/Password (15 Examples)
+
+1.  **Sign Up a New User:** [[1]](https://dev.to/devstoriesplayground/firebase-authentication-made-simple-detailed-code-examples-2h8l)[[2]](https://www.geeksforgeeks.org/firebase/getting-started-with-firebase-email-password-authentication/)
+
+    ```javascript
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log("User created:", user.email);
+      })
+      .catch((error) => {
+        console.error("Error creating user:", error.message);
+      });
+    ```
+2.  **Sign In an Existing User:** [[1]](https://dev.to/devstoriesplayground/firebase-authentication-made-simple-detailed-code-examples-2h8l)[[2]](https://www.geeksforgeeks.org/firebase/getting-started-with-firebase-email-password-authentication/)
+
+    ```javascript
+    firebase.auth().signInWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        console.log("User signed in:", user.email);
+      })
+      .catch((error) => {
+        console.error("Error signing in:", error.message);
+      });
+    ```
+3.  **Sign Out the Current User:**
+
+    ```javascript
+    firebase.auth().signOut()
+      .then(() => {
+        console.log("User signed out");
+      })
+      .catch((error) => {
+        console.error("Error signing out:", error.message);
+      });
+    ```
+4.  **Send a Password Reset Email:**
+
+    ```javascript
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        console.log("Password reset email sent");
+      })
+      .catch((error) => {
+        console.error("Error sending password reset email:", error.message);
+      });
+    ```
+5.  **Verify Email:**
+
+    ```javascript
+    user.sendEmailVerification()
+      .then(() => {
+        console.log('Verification email sent.');
+      });
+    ```
+6.  **Check if User is Signed In (Observer):**
+
+    ```javascript
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log("User is signed in:", user.email);
+      } else {
+        console.log("No user is signed in");
+      }
+    });
+    ```
+7.  **Get the Current User:**
+
+    ```javascript
+    const user = firebase.auth().currentUser;
+    if (user) {
+      console.log("Current user:", user.email);
+    } else {
+      console.log("No current user");
+    }
+    ```
+8.  **Delete a User:**
+
+    ```javascript
+    user.delete().then(() => {
+      console.log("User deleted");
+    }).catch((error) => {
+      console.error("Error deleting user:", error.message);
+    });
+    ```
+9.  **Update User's Email:**
+
+    ```javascript
+    user.updateEmail(newEmail).then(() => {
+      console.log("Email updated");
+    }).catch((error) => {
+      console.error("Error updating email:", error.message);
+    });
+    ```
+10. **Update User's Password:**
+
+    ```javascript
+    user.updatePassword(newPassword).then(() => {
+      console.log("Password updated");
+    }).catch((error) => {
+      console.error("Error updating password:", error.message);
+    });
+    ```
+11. **Set Custom User Claims (Admin SDK - Server-Side):**
+
+    This example requires the Firebase Admin SDK and must be done on a trusted server environment.
+
+    ```javascript
+    const admin = require('firebase-admin');
+
+    admin.auth().setCustomUserClaims(uid, { admin: true })
+      .then(() => {
+        console.log("Custom claims set for user");
+      })
+      .catch((error) => {
+        console.error("Error setting custom claims:", error);
+      });
+    ```
+
+12. **Retrieve Custom User Claims (Client-Side):**
+
+    ```javascript
+    firebase.auth().currentUser.getIdTokenResult()
+      .then((idTokenResult) => {
+        if (idTokenResult.claims.admin) {
+          console.log("User is an admin");
+        } else {
+          console.log("User is not an admin");
+        }
+      });
+    ```
+
+13. **Re-authenticate a User:**
+
+    ```javascript
+    const credential = firebase.auth.EmailAuthProvider.credential(email, password);
+    user.reauthenticateWithCredential(credential)
+      .then(() => {
+        console.log("User re-authenticated");
+      })
+      .catch((error) => {
+        console.error("Error re-authenticating:", error.message);
+      });
+    ```
+
+14. **Handle Account-Exists-With-Different-Credential Error:**
+
+    ```javascript
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .catch((error) => {
+        if (error.code === 'auth/email-already-in-use') {
+          firebase.auth().signInWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+              console.log("Signed in instead");
+            });
+        }
+      });
+    ```
+
+15. **Link Multiple Accounts to One User:**
+
+    First, sign in with one provider (e.g., email/password), then link another (e.g., Google).
+
+    ```javascript
+    const provider = new firebase.auth.GoogleAuthProvider();
+    user.linkWithPopup(provider)
+      .then((result) => {
+        console.log("Account linked");
+      })
+      .catch((error) => {
+        console.error("Error linking accounts:", error.message);
+      });
+    ```
+
+### Firebase Authentication with Google Sign-In (15 Examples)
+
+1.  **Sign In with Google (Popup):** [[3]](https://firebase.google.com/docs/auth/web/google-signin)[[4]](https://www.youtube.com/watch?v=iQxZHJ7VrA8)
+
+    ```javascript
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+        console.log("Signed in with Google:", user.displayName);
+      })
+      .catch((error) => {
+        console.error("Error signing in with Google:", error.message);
+      });
+    ```
+2.  **Sign In with Google (Redirect):**
+
+    ```javascript
+    const provider = new firebase.auth.GoogleAuthProvider();
+    firebase.auth().signInWithRedirect(provider);
+
+    // Later, to get the result:
+    firebase.auth().getRedirectResult()
+      .then((result) => {
+        if (result) {
+          const user = result.user;
+          console.log("Signed in with Google (redirect):", user.displayName);
+        }
+      })
+      .catch((error) => {
+        console.error("Error signing in with Google (redirect):", error.message);
+      });
+    ```
+3.   **Google Sign-In with Custom Parameters:**
+
+    ```javascript
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({
+      'login_hint': 'user@example.com'
+    });
+    ```
+
+4.  **Enable Google Sign-In:**
+
+    ```javascript
+    // Go to Firebase Console -> Authentication -> Sign-in method -> Enable Google
+    ```
+
+5.  **Create Google Provider:** [[3]](https://firebase.google.com/docs/auth/web/google-signin)[[5]](https://www.geeksforgeeks.org/reactjs/how-to-implement-google-login-in-your-web-app-with-firebase/)
+
+    ```javascript
+    const provider = new firebase.auth.GoogleAuthProvider();
+    ```
+
+6.  **Add Scopes:** [[3]](https://firebase.google.com/docs/auth/web/google-signin)
+
+    ```javascript
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    ```
+
+7.  **Handle Account Exists With Different Credential Error:** [[3]](https://firebase.google.com/docs/auth/web/google-signin)
+
+    ```javascript
+    firebase.auth().signInWithPopup(provider).catch(function(error) {
+      if (error.code === 'auth/account-exists-with-different-credential') {
+        // Handle the error
+      }
+    });
+    ```
+
+8.   **Get Google User Token:**
+
+    ```javascript
+    firebase.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
+      // Send token to your backend via HTTPS
+    }).catch(function(error) {
+      // Handle error
+    });
+    ```
+
+9.  **Sign Out After Google Sign-In:**
+
+    ```javascript
+    firebase.auth().signOut().then(function() {
+      // Sign-out successful.
+    }).catch(function(error) {
+      // An error happened.
+    });
+    ```
+
+10. **Link Google Account to Existing Account:**
+
+    ```javascript
+    firebase.auth().currentUser.linkWithPopup(provider).then(function(result) {
+      // Accounts linked.
+      var credential = result.credential;
+      var user = result.user;
+    }).catch(function(error) {
+      // Handle error.
+    });
+    ```
+
+11. **Reauthenticate With Google:**
+
+    ```javascript
+    firebase.auth().currentUser.reauthenticateWithPopup(provider).then(function() {
+      // User re-authenticated.
+    }).catch(function(error) {
+      // Handle error.
+    });
+    ```
+
+12. **Unlink Google Account:**
+
+    ```javascript
+    firebase.auth().currentUser.unlink(firebase.auth.GoogleAuthProvider.PROVIDER_ID).then(function() {
+      // Google account unlinked.
+    }).catch(function(error) {
+      // Handle error.
+    });
+    ```
+
+13. **Monitor Authentication State for Google Users:**
+
+    ```javascript
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        if (user.providerData[0].providerId === 'google.com') {
+          console.log("User signed in with Google");
+        }
+      }
+    });
+    ```
+
+14. **Get Google User Info:**
+
+    ```javascript
+    firebase.auth().onAuthStateChanged(function(user) {
+      if (user) {
+        console.log("Google User Name: " + user.displayName);
+        console.log("Google User Email: " + user.email);
+        console.log("Google User Photo: " + user.photoURL);
+      }
+    });
+    ```
+
+15. **Handle Google Sign-In Errors:**
+
+    ```javascript
+    firebase.auth().signInWithPopup(provider).catch(function(error) {
+      var errorCode = error.code;
+      var errorMessage = error.message;
+      console.log("Google Sign-In Error: " + errorCode + " - " + errorMessage);
+    });
+    ```
+
+Make sure to replace placeholders like `"user@example.com"` and the error handling with your own implementation. Also, remember to enable the appropriate sign-in methods in your Firebase console [[2]](https://www.geeksforgeeks.org/firebase/getting-started-with-firebase-email-password-authentication/)[[3]](https://firebase.google.com/docs/auth/web/google-signin).
+
+==============================================================================
+==============================================================================
+Certainly! Here are 30 additional examples for Firebase Authentication using email/password and Google Sign-in.
+
+### Firebase Authentication with Email/Password (15 Additional Examples)
+
+1. **Change User's Display Name:**
+
+    ```javascript
+    user.updateProfile({
+      displayName: "New User Name"
+    }).then(() => {
+      console.log("Display name updated.");
+    }).catch((error) => {
+      console.error("Error updating display name:", error.message);
+    });
+    ```
+
+2. **Get User's Profile Information:**
+
+    ```javascript
+    const user = firebase.auth().currentUser;
+    if (user) {
+      console.log("User Display Name:", user.displayName);
+      console.log("User Email:", user.email);
+    }
+    ```
+
+3. **Sign Up with Email Verification:**
+
+    ```javascript
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        userCredential.user.sendEmailVerification();
+        console.log("Verification email sent.");
+      })
+      .catch((error) => {
+        console.error("Error during sign up:", error.message);
+      });
+    ```
+
+4. **Check Password Strength (Basic Validation):**
+
+    ```javascript
+    const isPasswordStrong = (password) => {
+      return password.length >= 6; // Add more validation rules as needed
+    };
+    ```
+
+5. **Create User and Store Additional Data in Firestore:**
+
+    ```javascript
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .then((userCredential) => {
+        const user = userCredential.user;
+        return db.collection("users").doc(user.uid).set({
+          name: "User Name",
+          createdAt: new Date()
+        });
+      })
+      .then(() => {
+        console.log("User data stored in Firestore.");
+      })
+      .catch((error) => {
+        console.error("Error creating user:", error.message);
+      });
+    ```
+
+6. **Update User Profile with Photo URL:**
+
+    ```javascript
+    user.updateProfile({
+      photoURL: "http://example.com/photo.jpg"
+    }).then(() => {
+      console.log("Photo URL updated.");
+    }).catch((error) => {
+      console.error("Error updating photo URL:", error.message);
+    });
+    ```
+
+7. **Use a Custom Email Template for Reset Password:**
+
+    (This requires setting up custom email templates in Firebase Console.)
+
+8. **Check if Password Reset Email Sent Successfully:**
+
+    ```javascript
+    firebase.auth().sendPasswordResetEmail(email)
+      .then(() => {
+        console.log("Reset email sent if user exists.");
+      })
+      .catch((error) => {
+        console.error("Error sending reset email:", error.message);
+      });
+    ```
+
+9. **Implement Throttle on Login Attempts:**
+
+    ```javascript
+    let loginAttempts = 0;
+    const MAX_ATTEMPTS = 5;
+    
+    const loginUser = (email, password) => {
+      if (loginAttempts >= MAX_ATTEMPTS) {
+        console.error("Too many attempts. Please try again later.");
+        return;
+      }
+    
+      firebase.auth().signInWithEmailAndPassword(email, password)
+        .then(() => {
+          console.log("Logged in successfully.");
+        })
+        .catch((error) => {
+          loginAttempts++;
+          console.error("Login failed:", error.message);
+        });
+    };
+    ```
+
+10. **Get User's Last Sign-In Time:**
+
+    ```javascript
+    const user = firebase.auth().currentUser;
+    if (user) {
+      console.log("Last sign-in time:", user.metadata.lastSignInTime);
+    }
+    ```
+
+11. **Logout Redirect for Single Page Applications (SPAs):**
+
+    ```javascript
+    firebase.auth().signOut().then(() => {
+      window.location.replace("login.html");
+    });
+    ```
+
+12. **Handle Email Already in Use Error During Sign-Up:**
+
+    ```javascript
+    firebase.auth().createUserWithEmailAndPassword(email, password)
+      .catch((error) => {
+        if (error.code === 'auth/email-already-in-use') {
+          console.log("Email already in use. Try signing in.");
+        }
+      });
+    ```
+
+13. **Profile Update with Merged Data (Existing User):**
+
+    ```javascript
+    const userRef = db.collection("users").doc(user.uid);
+    
+    userRef.set({
+      name: "Updated Name",
+      age: 30
+    }, { merge: true }).then(() => {
+      console.log("User profile updated with merge.");
+    });
+    ```
+
+14. **Enable Multi-Factor Authentication (MFA) (Advanced Setup):**
+
+    (Requires backend setup, so it's not covered here but should be done via Admin SDK.)
+
+15. **Track User Activity with Firestore:**
+
+    ```javascript
+    const logUserActivity = (userId, activity) => {
+      db.collection("activityLogs").add({
+        userId: userId,
+        activity: activity,
+        timestamp: new Date()
+      });
+    };
+    ```
+
+### Firebase Authentication with Google Sign-In (15 Additional Examples)
+
+1. **Sign In with Custom Parameters (Login Hint):**
+
+    ```javascript
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ login_hint: "user@example.com" });
+    ```
+
+2. **Fetch Google User's Access Token:**
+
+    ```javascript
+    firebase.auth().signInWithPopup(provider).then((result) => {
+      const token = result.credential.accessToken;
+      console.log("Access Token:", token);
+    });
+    ```
+
+3. **Handle Errors When Linking Google Account:**
+
+    ```javascript
+    user.linkWithPopup(provider).catch((error) => {
+      console.error("Error linking Google account:", error.message);
+    });
+    ```
+
+4. **Get User's Google Profile Data:**
+
+    ```javascript
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const profileData = {
+          name: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL
+        };
+        console.log("Profile Data:", profileData);
+      }
+    });
+    ```
+
+5. **Re-authenticate with Google Provider:**
+
+    ```javascript
+    user.reauthenticateWithPopup(provider).then(() => {
+      console.log("User re-authenticated with Google.");
+    }).catch((error) => {
+      console.error("Error during re-authentication:", error.message);
+    });
+    ```
+
+6. **Check if Google User is Admin (using Firestore):**
+
+    ```javascript
+    const checkAdminStatus = (userId) => {
+      const userRef = db.collection("users").doc(userId);
+      userRef.get().then((doc) => {
+        if (doc.exists && doc.data().role === "admin") {
+          console.log("User is an admin.");
+        }
+      });
+    };
+    ```
+
+7. **Sign In with Google and Set Custom Claims (Server-Side):**
+
+    (Requires backend Admin SDK setup.)
+
+8. **Unlink Google Account from Firebase User:**
+
+    ```javascript
+    user.unlink(firebase.auth.GoogleAuthProvider.PROVIDER_ID).then(() => {
+      console.log("Google account unlinked.");
+    }).catch((error) => {
+      console.error("Error unlinking Google account:", error.message);
+    });
+    ```
+
+9. **Restrict Google Sign-in to Specific Domains:**
+
+    (Configure allowed domains in Firebase Console.)
+
+10. **Track User Sign-In Events:**
+
+    ```javascript
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        console.log("User signed in:", user.email);
+      } else {
+        console.log("No user signed in.");
+      }
+    });
+    ```
+
+11. **Persistent Login with Google Sign-in:**
+
+    ```javascript
+    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+      .then(() => {
+        // Now sign in
+        return firebase.auth().signInWithPopup(provider);
+      });
+    ```
+
+12. **Monitor Google Sign-In Errors:**
+
+    ```javascript
+    firebase.auth().signInWithPopup(provider).catch((error) => {
+      console.error("Google Sign-In Error:", error);
+    });
+    ```
+
+13. **Create a Custom Google Sign-In Button:**
+
+    ```html
+    <button id="googleSignInBtn">Sign in with Google</button>
+    ```
+
+    ```javascript
+    document.getElementById("googleSignInBtn").addEventListener("click", () => {
+      firebase.auth().signInWithPopup(provider);
+    });
+    ```
+
+14. **Use Firestore for User Profile after Google Sign-In:**
+
+    ```javascript
+    firebase.auth().signInWithPopup(provider).then((result) => {
+      const user = result.user;
+      return db.collection("users").doc(user.uid).set({
+        displayName: user.displayName,
+        email: user.email,
+        createdAt: new Date()
+      });
+    });
+    ```
+
+15. **Google Sign-In with Offline Access:**
+
+    (This requires you to enable offline access in your Google Cloud Console.)
+
+### Conclusion
+
+These additional examples provide a thorough understanding of how to implement and manage authentication with both email/password and Google Sign-In using Firebase. Feel free to customize them according to your application's needs! If you have any more questions or specific scenarios in mind, let me know!

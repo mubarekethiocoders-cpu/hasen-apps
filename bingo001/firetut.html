@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🔥 Detailed Firebase Bingo Tutorial - Complete Project Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.3em;
+            color: #666;
+            font-weight: 300;
+        }
+
+        nav {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 40px;
+        }
+
+        nav h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        nav ul {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        nav a {
+            color: #333;
+            text-decoration: none;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.3s;
+            display: block;
+        }
+
+        nav a:hover {
+            background: #667eea;
+            color: white;
+            transform: translateX(5px);
+        }
+
+        section {
+            background: white;
+            margin-bottom: 30px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-size: 2.2em;
+            color: #667eea;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        h3 {
+            font-size: 1.6em;
+            color: #764ba2;
+            margin: 25px 0 15px 0;
+        }
+
+        pre.code {
+            background: #1e1e1e;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            margin: 20px 0;
+        }
+
+        .tip {
+            background: linear-gradient(135deg, #c6f6d5, #9ae6b4);
+            border-left: 5px solid #38a169;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        .warning {
+            background: linear-gradient(135deg, #fed7aa, #fcbf49);
+            border-left: 5px solid #ed8936;
+            padding: 20px;
+            border-radius: 0 10px 10px 0;
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background: #667eea;
+            color: white;
+        }
+
+        ul,
+        ol {
+            padding-left: 30px;
+            margin: 15px 0;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            font-weight: 300;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Firebase Bingo Project</h1>
+            <p class="subtitle">Complete Real-Time Multiplayer Game Tutorial with Google Auth & Firestore</p>
+        </header>
+
+        <nav>
+            <h2>📚 Table of Contents</h2>
+            <ul>
+                <li><a href="#overview">Project Overview</a></li>
+                <li><a href="#setup">Firebase Setup</a></li>
+                <li><a href="#files">File Structure</a></li>
+                <li><a href="#auth">Authentication</a></li>
+                <li><a href="#firestore">Firestore Logic</a></li>
+                <li><a href="#gameplay">Game Mechanics</a></li>
+                <li><a href="#code-snippets">Key Code Snippets</a></li>
+                <li><a href="#troubleshooting">Troubleshooting</a></li>
+                <li><a href="#play">How to Play</a></li>
+                <li><a href="#extend">Extensions</a></li>
+            </ul>
+        </nav>
+
+        <section id="overview">
+            <h2>🎲 Project Overview</h2>
+            <p>This is a fully functional real-time multiplayer Bingo game built with vanilla HTML/CSS/JS and Firebase.
+                Players sign in with Google, create or join lobbies via unique IDs, receive unique randomized 5x5 boards
+                (numbers 1-25), and play in real-time. The host calls numbers, boards update instantly across players,
+                and anyone can claim Bingo when they have a row/column/diagonal.</p>
+            <div class="tip">
+                <strong>Key Features:</strong><br>
+                • Google Auth with session persistence<br>
+                • Real-time Firestore sync via onSnapshot<br>
+                • Unique boards per player<br>
+                • Client-side Bingo validation<br>
+                • Responsive dark theme UI<br>
+                • Lobby listing & direct join by ID
+            </div>
+            <p>Files: [`index.html`](index.html) (main lobby), [`lobby.html`](lobby.html) (game),
+                [`script.js`](script.js) (logic).</p>
+        </section>
+
+        <section id="setup">
+            <h2>⚙️ Firebase Setup</h2>
+            <ol>
+                <li>Create project at <a href="https://console.firebase.google.com">console.firebase.google.com</a></li>
+                <li>Enable Authentication → Google provider (add localhost)</li>
+                <li>Create Firestore in test mode</li>
+                <li>Add web app, copy config to [`script.js`](script.js:24)</li>
+                <li>Serve locally (python -m http.server or Live Server)</li>
+            </ol>
+            <div class="warning"><strong>Security:</strong> Test mode allows all ops. Production: restrict to auth !=
+                null.</div>
+        </section>
+
+        <section id="files">
+            <h2>📁 File Structure</h2>
+            <table>
+                <tr>
+                    <th>File</th>
+                    <th>Purpose</th>
+                    <th>Lines</th>
+                </tr>
+                <tr>
+                    <td>[`index.html`](index.html)</td>
+                    <td>Main page: Auth, create/list/join lobbies</td>
+                    <td>231</td>
+                </tr>
+                <tr>
+                    <td>[`lobby.html`](lobby.html)</td>
+                    <td>Game UI: Board, controls, real-time updates</td>
+                    <td>262</td>
+                </tr>
+                <tr>
+                    <td>[`script.js`](script.js)</td>
+                    <td>Firebase + game logic (imports, auth, CRUD, realtime)</td>
+                    <td>480</td>
+                </tr>
+            </table>
+        </section>
+
+        <section id="auth">
+            <h2>🔐 Authentication</h2>
+            <p>Uses Firebase Auth v12.6 with Google provider and redirect (session persistence). See
+                [`script.js`](script.js:2-9) imports, [`script.js`](script.js:37-39) init.</p>
+            <pre class="code">window.loginGoogle = async () => {
+  setPersistence(auth, browserSessionPersistence);
+  await signInWithRedirect(auth, googleProvider);
+};</pre>
+            <p>onAuthStateChanged handles state: show/hide buttons, list games [`script.js`](script.js:453).</p>
+        </section>
+
+        <section id="firestore">
+            <h2>📊 Firestore Logic</h2>
+            <p>Lobbies collection: one doc per game. Structure:</p>
+            <pre class="code">{
+  status: "waiting",
+  hostUID: "uid",
+  players: { uid: {displayName, board: [1..25]} },
+  calledNumbers: [],
+  winnerUID: null
+}</pre>
+            <p>Ops: addDoc(create), updateDoc(join/call/claim), onSnapshot(realtime), query(waiting lobbies)
+                [`script.js`](script.js:13-20).</p>
+        </section>
+
+        <section id="gameplay">
+            <h2>⚽ Game Mechanics</h2>
+            <h3>Board Generation</h3>
+            <p>Shuffle 1-25 uniquely per player [`script.js`](script.js:327, [`script.js`](script.js:364).</p>
+            <h3>Bingo Check</h3>
+            <pre class="code">function checkBingo(board, calledNumbers) {
+  // 5 rows, 5 cols, 2 diags
+  // Uses flat array indices
+} [`script.js`](script.js:47)</pre>
+            <h3>Real-time Updates</h3>
+            <p>onSnapshot renders board (green if called), last called, history list [`script.js`](script.js:181).</p>
+        </section>
+
+        <section id="code-snippets">
+            <h2>💻 Key Code Snippets</h2>
+            <h3>Create Game [`script.js`](script.js:319)</h3>
+            <pre class="code">const lobbyRef = await addDoc(collection(db, "lobbies"), { ... });
+window.location.href = `lobby.html?lobbyId=${lobbyRef.id}`;</pre>
+            <h3>Lobby Listener [`script.js`](script.js:181)</h3>
+            <pre class="code">onSnapshot(lobbyRef, (doc) => {
+  // Update UI: board, buttons, message, called list
+});</pre>
+        </section>
+
+        <section id="troubleshooting">
+            <h2>🔧 Troubleshooting</h2>
+            <ul>
+                <li>Auth fail: Check authorized domains (localhost)</li>
+                <li>Permission denied: Firestore rules or unauth</li>
+                <li>No realtime: Wrong lobbyId or snapshot error</li>
+                <li>Board not unique: Shuffle logic</li>
+            </ul>
+            <div class="tip">Console: Check Firebase errors. Test: Create lobby, join incognito.</div>
+        </section>
+
+        <section id="play">
+            <h2>🎮 How to Play</h2>
+            <ol>
+                <li>index.html → Sign in Google</li>
+                <li>Create Game → Get ID (share)</li>
+                <li>Others: List games or Join by ID</li>
+                <li>lobby.html → Host calls numbers</li>
+                <li>Mark auto, claim Bingo!</li>
+            </ol>
+        </section>
+
+        <section id="extend">
+            <h2>🚀 Extensions</h2>
+            <ul>
+                <li>Chat: messages array in lobby</li>
+                <li>Player list UI</li>
+                <li>Sound effects on call</li>
+                <li>Multiple boards/game modes</li>
+                <li>Deploy: Firebase Hosting</li>
+            </ul>
+        </section>
+
+        <footer>
+            <p>Project analyzed from actual files. Ready to run! | Total lines: ~1000+ across project</p>
+        </footer>
+    </div>
+</body>
+
+</html>

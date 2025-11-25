@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bingo Game Project Documentation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #4CAF50;
+        }
+
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Bingo Game Project Documentation</h1>
+    <p>This document explains how the Bingo game project was created, including the JavaScript functions, Firebase
+        setup, and other relevant details.</p>
+
+    <h2>Project Overview</h2>
+    <p>The Bingo game is a multiplayer game that allows users to create and join lobbies, play, and claim Bingo in
+        real-time using Firebase Firestore for data synchronization.</p>
+
+    <h2>Firebase Setup</h2>
+    <p>Firebase is used for authentication and real-time data synchronization. The Firebase configuration is as follows:
+    </p>
+    <pre>
+const firebaseConfig = {
+    apiKey: "AIzaSyBUhcN9oviRFxFyYi27Hg9MxtaE0gJy4q4",
+    authDomain: "loginregister01-51805.firebaseapp.com",
+    projectId: "loginregister01-51805",
+    storageBucket: "loginregister01-51805.firebasestorage.app",
+    messagingSenderId: "605068863596",
+    appId: "1:605068863596:web:c1048d32fdfaefa0041049",
+};
+    </pre>
+
+    <h2>JavaScript Functions</h2>
+    <h3>1. checkBingo(board, calledNumbers)</h3>
+    <p>This function checks if the given Bingo board is a Bingo based on the called numbers.</p>
+    <pre>
+function checkBingo(board, calledNumbers) {
+    for (let i = 0; i < 25; i += 5) {
+        if ([0, 1, 2, 3, 4].every((j) => calledNumbers.includes(board[i + j])))
+            return true;
+    }
+    for (let i = 0; i < 5; i++) {
+        if ([0, 5, 10, 15, 20].every((j) => calledNumbers.includes(board[i + j])))
+            return true;
+    }
+    if ([0, 6, 12, 18, 24].every((index) => calledNumbers.includes(board[index])))
+        return true;
+    if ([4, 8, 12, 16, 20].every((index) => calledNumbers.includes(board[index])))
+        return true;
+    return false;
+}
+    </pre>
+
+    <h3>2. handleBingoClaim(lobbyId)</h3>
+    <p>This function handles the Bingo claim by checking if the user's board is a Bingo and updating the lobby document
+        accordingly.</p>
+    <pre>
+async function handleBingoClaim(lobbyId) {
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Please sign in to claim a Bingo.");
+        return;
+    }
+    const lobbyRef = doc(db, "lobbies", lobbyId);
+    const lobbyDoc = await getDoc(lobbyRef);
+    const lobby = lobbyDoc.data();
+    const calledNumbers = lobby.calledNumbers;
+    const playerBoard = lobby.players[user.uid]?.board;
+    if (!playerBoard) {
+        alert("Error: Your board state is missing. Did you join the game?");
+        return;
+    }
+    if (checkBingo(playerBoard, calledNumbers)) {
+        await updateDoc(lobbyRef, {
+            winnerUID: user.uid,
+            status: "finished",
+        });
+        alert("Bingo claimed! You are the winner!");
+    } else {
+        alert("No Bingo found. Keep playing!");
+    }
+}
+    </pre>
+
+    <h3>3. callNextNumber(lobbyId, hostUID)</h3>
+    <p>This function generates the next random number that has not been called yet and updates the lobby document.</p>
+    <pre>
+async function callNextNumber(lobbyId, hostUID) {
+    const user = auth.currentUser;
+    if (!user || user.uid !== hostUID) {
+        alert("Only the host can call a number.");
+        return;
+    }
+    const lobbyRef = doc(db, "lobbies", lobbyId);
+    const calledNumbers = (await getDoc(lobbyRef)).data().calledNumbers;
+    let availableNumbers = Array.from({ length: 25 }, (_, i) => i + 1).filter(
+        (n) => !calledNumbers.includes(n)
+    );
+    if (availableNumbers.length === 0) {
+        alert("All numbers have been called!");
+        return;
+    }
+    const nextNumber =
+        availableNumbers[Math.floor(Math.random() * availableNumbers.length)];
+    await updateDoc(lobbyRef, {
+        calledNumbers: [...calledNumbers, nextNumber],
+    });
+}
+    </pre>
+
+    <h3>4. initializeLobby()</h3>
+    <p>This function initializes the lobby view by setting up a real-time listener for the lobby document and updating
+        the UI accordingly.</p>
+    <pre>
+function initializeLobby() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const lobbyId = urlParams.get("lobbyId");
+    if (!lobbyId) {
+        document.getElementById("message").textContent =
+            "Error: Lobby ID is missing.";
+        return;
+    }
+    const lobbyRef = doc(db, "lobbies", lobbyId);
+    const bingoBoard = document.getElementById("bingo-board");
+    const message = document.getElementById("message");
+    const callButton = document.getElementById("call-number-button");
+    const claimButton = document.getElementById("claim-bingo-button");
+    onSnapshot(lobbyRef, (docSnapshot) => {
+        if (!docSnapshot.exists()) {
+            message.innerHTML = "Lobby not found or deleted.";
+            return;
+        }
+        const lobby = docSnapshot.data();
+        const calledNumbers = lobby.calledNumbers || [];
+        const user = auth.currentUser;
+        const isHost = user && user.uid === lobby.hostUID;
+        callButton.style.display = isHost ? "block" : "none";
+        claimButton.style.display = user ? "block" : "none"; 
+        if (lobby.status === "finished" && lobby.winnerUID) {
+            message.innerHTML = `🏆 **GAME OVER!** Winner: ${
+                lobby.players[lobby.winnerUID]?.displayName || "Unknown User"
+            }`;
+        } else if (lobby.status === "waiting") {
+            message.innerHTML = `Waiting for players... (Current players: ${
+                Object.keys(lobby.players).length
+            })`;
+        } else {
+            message.innerHTML = `Game in progress. Last called number: **${
+                calledNumbers.length > 0
+                    ? calledNumbers[calledNumbers.length - 1]
+                    : "N/A"
+            }**`;
+        }
+        bingoBoard.innerHTML = "";
+        for (let i = 1; i <= 25; i++) {
+            const cell = document.createElement("div");
+            cell.className = "bingo-cell";
+            cell.textContent = i;
+            if (calledNumbers.includes(i)) {
+                cell.classList.add("called");
+            }
+            bingoBoard.appendChild(cell);
+        }
+    });
+    callButton.onclick = () => callNextNumber(lobbyId, lobbyRef.hostUID);
+    claimButton.onclick = () => handleBingoClaim(lobbyId);
+    callButton.disabled = true;
+}
+    </pre>
+
+    <h3>5. createGame()</h3>
+    <p>This function creates a new game by adding a document to the `/lobbies` collection and redirecting the user to
+        the lobby page.</p>
+    <pre>
+window.createGame = async function () {
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Please sign in to create a game.");
+        return;
+    }
+    const numbers = Array.from({ length: 25 }, (_, i) => i + 1);
+    for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+    const lobbyRef = await addDoc(collection(db, "lobbies"), {
+        status: "waiting",
+        hostUID: user.uid,
+        players: {
+            [user.uid]: { displayName: user.displayName, board: numbers }, 
+        },
+        calledNumbers: [],
+        winnerUID: null,
+    });
+    const lobbyId = lobbyRef.id;
+    alert(`Game created! Share this code: ${lobbyId}`);
+    window.location.href = `lobby.html?lobbyId=${lobbyId}`;
+};
+    </pre>
+
+    <h3>6. joinGame(lobbyId)</h3>
+    <p>This function joins a game by updating the chosen lobby document with the new user's details.</p>
+    <pre>
+window.joinGame = async function (lobbyId) {
+    const user = auth.currentUser;
+    if (!user) {
+        alert("Please sign in to join a game.");
+        return;
+    }
+    const lobbyRef = doc(db, "lobbies", lobbyId);
+    const numbers = Array.from({ length: 25 }, (_, i) => i + 1);
+    for (let i = numbers.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+    await updateDoc(lobbyRef, {
+        [`players.${user.uid}`]: { displayName: user.displayName, board: numbers },
+    });
+    window.location.href = `lobby.html?lobbyId=${lobbyId}`;
+};
+    </pre>
+
+    <h2>Conclusion</h2>
+    <p>This document provides a comprehensive guide to the Bingo game project, including the JavaScript functions,
+        Firebase setup, and other relevant details.</p>
+</body>
+
+</html>

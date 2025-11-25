@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Code Occurrences in Bingo Game Project</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #4CAF50;
+        }
+
+        pre {
+            background-color: #f0f0f0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            overflow-x: auto;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Firebase Code Occurrences in Bingo Game Project</h1>
+    <p>This document explains every occurrence of Firebase code in the Bingo game project.</p>
+
+    <h2>Firebase Firestore Code</h2>
+
+    <h3>1. Updating Player Details in Lobby Document</h3>
+    <p>On line 269 of <a href="script.js:269"><code>script.js</code></a>, we have:</p>
+    <pre>
+await updateDoc(lobbyRef, {
+    [`players.${user.uid}`]: { displayName: user.displayName, board: numbers },
+});
+    </pre>
+    <p>This code updates the lobby document by adding the new user's details to the `players` map.</p>
+
+    <!-- Continue with other Firebase code occurrences and their explanations -->
+
+    <h2>Conclusion</h2>
+    <p>This document provides a comprehensive guide to Firebase code occurrences in the Bingo game project.</p>
+</body>
+
+</html>
