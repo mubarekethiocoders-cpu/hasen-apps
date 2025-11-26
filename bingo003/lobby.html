@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Bingo Game</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #33aaff;
+            --secondary: #ffdd44;
+            --background-dark: #1a1a2e;
+            --background-medium: #1f4068;
+            --text-light: #e0e0e0;
+            --called-bg: #2a4c8a;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            padding: 10px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0;
+            padding-top: 70px;
+            /* Space for the fixed header */
+        }
+
+        #message {
+            margin: 10px auto;
+            padding: 10px;
+            background-color: var(--background-medium);
+            border-radius: 8px;
+            width: 90%;
+            max-width: 350px;
+            font-size: 0.9em;
+            box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        #called-number-container {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: solid 1px #e74b0d83;
+            color: #e96c06ec;
+            font-size: 0.86em;
+            border-radius: 5px;
+        }
+
+        #called-number {
+            font-size: 1.0em;
+            font-weight: bold;
+            color: white;
+            background-color: #e96c06e3;
+            padding: 8px;
+            margin: 8px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #bingo-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 2px;
+            width: 95vw;
+            max-width: 350px;
+            margin: 0 auto;
+        }
+
+        .bingo-cell {
+            aspect-ratio: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: default;
+        }
+
+        .bingo-cell.called {
+            background-color: var(--called-bg);
+            color: rgba(255, 255, 255, 0.6);
+            position: relative;
+        }
+
+        .bingo-cell.called::after {
+            content: 'X';
+            position: absolute;
+            font-size: 1.5em;
+            opacity: 0.3;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        #claim-bingo-button {
+            background-color: var(--secondary);
+            color: #333;
+        }
+
+        #called-numbers-list {
+            margin-top: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 5px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .called-list-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+        }
+
+        /* --- Navbar Styles from Index.html --- */
+        .header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #111122;
+            padding: 10px 15px;
+            /*     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-sizing: border-box;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-area {
+            color: #33aaff;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 0;
+            text-shadow:
+                0 0 10px #33aaff13,
+                0 0 22px #33aaff18,
+                0 0 28px rgba(51, 170, 255, 0.022),
+                0 0 36px rgba(51, 170, 255, 0.027);
+            animation: pulse 5s infinite alternate;
+        }
+
+        .user-info-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .balance-display {
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 0.88em;
+            white-space: nowrap;
+            margin-right: 8px;
+        }
+
+        .signout-btn {
+            background-color: #f44336;
+            padding: 7px 12px;
+            margin: auto 4px;
+            font-size: 0.8em;
+            box-shadow: none;
+        }
+
+
+        /* --- Profile Image Style --- */
+        .profile-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 0;
+            margin-left: 5px;
+            margin-right: 8px;
+            /* Margin to separate from button */
+        }
+
+        #profile-icon-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            display: block;
+            background: #001b94 !important;
+            /* Fallback background while loading */
+        }
+
+        /* --- END Navbar Styles --- */
+    </style>
+</head>
+
+<body>
+
+    <div class="header-bar">
+        <div class="logo-area">🎲 Bingo Hub
+        </div>
+
+        <div class="user-info-area">
+            <span id="header-balance-display" class="balance-display"></span>
+            <button id="header-signout-btn" class="signout-btn" onclick="window.logout()" style="display:none;">Sign
+                Out</button>
+
+            <a href="profile.html" class="profile-link" title="View Profile">
+                <img id="profile-icon-img"
+                    src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'><path clip-rule='evenodd' fill-rule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-5.5-2.5a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v.25a.75.75 0 01-.75.75H13a.75.75 0 01-.75-.75V7.5zm-3 0a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v.25a.75.75 0 01-.75.75H10a.75.75 0 01-.75-.75V7.5zm-3 0a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v.25a.75.75 0 01-.75.75H7a.75.75 0 01-.75-.75V7.5zM4 14.75a.75.75 0 01.75-.75h10.5a.75.75 0 01.75.75v.25a1.5 1.5 0 01-1.5 1.5h-8.5a1.5 1.5 0 01-1.5-1.5v-.25z'></path></svg>"
+                    alt="Profile" style="display:none;">
+            </a>
+        </div>
+    </div>
+
+
+    <div id="message">Loading...</div>
+
+    <div id="called-number-container">
+        <div>Last Number:</div>
+        <div id="called-number">--</div>
+    </div>
+
+    <div id="bingo-board"></div>
+
+    <button id="call-number-button" style="display:none">Call Number</button>
+    <button id="claim-bingo-button" style="display:none">CLAIM BINGO!</button>
+
+    <div id="called-numbers-list"></div>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>

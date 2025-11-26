@@ -1,1 +1,392 @@
+<!DOCTYPE html>
+<html>
 
+<head>
+    <title>Bingo Hub - Main</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #33aaff;
+            /* Blue */
+            --secondary: #ffdd44;
+            /* Yellow */
+            --tertiary: #19a773;
+            /* Emerald Green for body button */
+            --background-dark: #1a1a2e;
+            --background-medium: #1f4068;
+            --card-bg: rgba(31, 64, 104, 0.7);
+            /* Frosted background */
+            --text-light: #e0e0e0;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Prevent horizontal scroll */
+        html {
+            overflow-x: hidden;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            padding: 0;
+            margin: 0;
+            padding-top: 70px;
+            /* Space for the fixed header */
+        }
+
+        /* Hide original headings */
+        h1,
+        h2,
+        hr {
+            display: none;
+        }
+
+        /* --- NEW Header Bar (Sticky/Fixed) --- */
+        .header-bar {
+            /*  box-shadow: var(--shadow); */
+
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: #111122;
+            padding: 10px 15px;
+            /*     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            box-sizing: border-box;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .logo-area {
+            /*  font-size: 1.8em;
+            font-weight: 800;
+            color: var(--primary); */
+        }
+
+        .logo-area {
+            color: #33aaff;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 0;
+            /* Reset margin for header alignment */
+            text-shadow:
+                0 0 10px #33aaff13,
+                0 0 22px #33aaff18,
+                0 0 28px rgba(51, 170, 255, 0.022),
+                0 0 36px rgba(51, 170, 255, 0.027);
+            animation: pulse 5s infinite alternate;
+        }
+
+        /* --- User Info Area (Balance, Signout, Profile) --- */
+        .user-info-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .balance-display {
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
+
+        .signout-btn {
+            background-color: #f44336;
+            padding: 7px 12px;
+            font-size: 0.8em;
+            box-shadow: none;
+        }
+
+        .balance-container {
+            padding: 2px 6px;
+            border: solid 1px rgba(41, 255, 41, 0.308);
+            border-radius: 5px;
+            font-size: 0.8em !important;
+        }
+
+        .deposite-btn {
+            background-color: #005f24 !important;
+            /*  padding: 7px 12px;  */
+            max-height: 22px;
+            font-size: 0.68em !important;
+            line-height: 1.0;
+            box-shadow: none;
+        }
+
+
+
+        /* --- Profile Image Style --- */
+        .profile-link {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            padding: 0;
+            margin-left: 5px;
+            /* Margin to separate from button */
+        }
+
+        #profile-icon-img {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border-color);
+            display: block;
+            background: #001b94 !important;
+            /* Fallback background while loading */
+        }
+
+        /* End New Profile Image Style */
+
+        /* --- Main Content Layout --- */
+        .main-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 0 10px;
+        }
+
+        h3 {
+            color: var(--text-light);
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .content-card {
+            margin: 15px 0;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+        }
+
+        /* Sign in button/Welcome message for main body */
+        #message {
+            padding: 20px;
+            background-color: var(--background-medium);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 450px;
+            margin: 20px auto;
+        }
+
+        button {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.0em;
+            font-weight: 600;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+            transition: all 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            filter: brightness(110%);
+        }
+
+        /* Styling for the 'Create Game' button in the body */
+        .create-game-body-btn {
+            background-color: var(--tertiary) !important;
+            margin-top: 15px !important;
+        }
+
+        /* Game List Styling (simplified for brevity) */
+        #game-list {
+            text-align: left;
+            padding: 0;
+        }
+
+        #game-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        #game-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed var(--border-color);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 0.9em;
+        }
+
+        #game-list li:last-child {
+            border-bottom: none;
+        }
+
+        .join-btn {
+            background-color: #e96c06;
+            margin: 0 !important;
+            font-size: 0.85em !important;
+            padding: 7px 12px !important;
+            white-space: nowrap;
+        }
+
+        /* Join by ID Section */
+        .join-by-id {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        input[type="text"] {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 1em;
+            background-color: rgba(255, 255, 255, 0.95);
+            color: #333;
+        }
+
+        /* --- MEDIA QUERY for Small Mobile Screens --- */
+        @media (max-width: 768px) {
+            /* Styles within this block will ONLY apply to screens 480px wide or smaller */
+
+            /* Example: Reduce header logo size */
+            .header-bar .logo-area {
+                font-size: 0.8em;
+                font-weight: 600;
+                line-height: 1.2;
+                letter-spacing: 0.02;
+            }
+
+            .signout-btn {
+                font-size: 0.7em;
+                font-weight: 500;
+                padding: 6px 9px;
+                line-height: 0.8;
+                letter-spacing: 0.02;
+                margin-right: 3px;
+                margin-left: 3px;
+            }
+
+            .balance-container {
+                font-size: 0.7em !important;
+                padding: 2px 5px;
+                border-radius: 4px;
+                ;
+            }
+
+            /* Example: Make balance display smaller and less prominent */
+            .balance-display {
+                font-size: 0.74em;
+                font-weight: 500;
+                line-height: 0.8;
+                letter-spacing: 0.02;
+                /*    order: 0;  */
+                margin-right: 3px;
+                margin-left: 3px;
+                /* Change order to move it after the signout button/profile */
+            }
+
+            .deposite-btn {
+                font-size: 0.75em !important;
+                color: rgb(0, 190, 48);
+                font-weight: 500;
+                max-height: 28px;
+                line-height: 0.8;
+                letter-spacing: 0.02;
+                margin-right: 3px;
+                margin-left: 3px;
+            }
+
+            .profile-link {
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+                padding: 0;
+                margin-left: 3px;
+                margin-right: 3px;
+            }
+
+            #profile-icon-img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 0px solid var(--border-color);
+                display: block;
+                background: #001b94;
+                /* Fallback background while loading */
+            }
+
+            /* Example: Stack the 'Join Specific Game' section elements vertically if needed */
+            .content-card.join-by-id {
+                padding: 15px;
+                /* Reduce padding */
+            }
+
+            input[type="text"] {
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-bar">
+        <div class="logo-area">🎲 Bingo Hub
+        </div>
+
+        <div class="user-info-area">
+            <div id="balance-container" class="balance-container">
+                <span id="header-balance-display" class="balance-display"></span>
+                <button id="deposit-btn" class="deposit-btn" onclick="window.location.href='deposit.html'"
+                    style="">Deposit</button>
+            </div>
+            <button id="header-signout-btn" class="signout-btn" onclick="window.logout()" style="display:none;">Sign
+                Out</button>
+
+            <a href="profile.html" class="profile-link" title="View Profile">
+                <img id="profile-icon-img"
+                    src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23666'><path clip-rule='evenodd' fill-rule='evenodd' d='M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-5.5-2.5a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v.25a.75.75 0 01-.75.75H13a.75.75 0 01-.75-.75V7.5zm-3 0a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v.25a.75.75 0 01-.75.75H10a.75.75 0 01-.75-.75V7.5zm-3 0a.75.75 0 01.75-.75h.25a.75.75 0 01.75.75v.25a.75.75 0 01-.75.75H7a.75.75 0 01-.75-.75V7.5zM4 14.75a.75.75 0 01.75-.75h10.5a.75.75 0 01.75.75v.25a1.5 1.5 0 01-1.5 1.5h-8.5a1.5 1.5 0 01-1.5-1.5v-.25z'></path></svg>"
+                    alt="Profile" style="display:none;">
+            </a>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div id="message">Loading...</div>
+
+        <div class="content-card">
+            <h3>Active Lobbies (Waiting)</h3>
+            <div id="game-list">Loading games...</div>
+        </div>
+
+        <div class="content-card join-by-id">
+            <h3>Join Specific Game</h3>
+            <input type="text" id="lobby-id-input" placeholder="Paste Lobby ID here (e.g. ABCDEF)">
+            <button onclick="window.joinGameFromInput()">🚀 Join Game</button>
+        </div>
+    </div>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>

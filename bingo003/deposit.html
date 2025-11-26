@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deposit</title>
+    <style>
+        body {
+            background: #1a1a2e;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .header-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: #111122;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+        }
+
+        .logo {
+            font-size: 1.8em;
+            color: #33aaff;
+        }
+
+        .deposit-container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #1f4068;
+            border-radius: 12px;
+        }
+
+        input {
+            display: block;
+            margin: 10px auto;
+            padding: 12px;
+            width: 80%;
+            max-width: 300px;
+            border: none;
+            border-radius: 8px;
+        }
+
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 1em;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header-bar">
+        <div class="logo">🎲 Bingo Hub</div>
+        <div>
+            <span id="header-balance-display"></span>
+            <button onclick="logout()">Sign Out</button>
+        </div>
+    </div>
+    <div class="deposit-container">
+        <h2>💰 Deposit Funds</h2>
+        <p id="balance-display">Loading balance...</p>
+        <input type="number" id="amount-input" placeholder="Enter amount" min="1" step="1">
+        <button onclick="addDeposit()">Add Deposit</button>
+        <button onclick="location.href='index.html'">Back to Lobby</button>
+    </div>
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
