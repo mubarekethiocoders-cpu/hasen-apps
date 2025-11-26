@@ -16,7 +16,7 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: Inter, 'Segoe UI', Tahoma, sans-serif;
             background-color: var(--background-dark);
             color: var(--text-light);
             padding: 20px;
@@ -95,7 +95,7 @@
 
         .logo-area {
             color: #33aaff;
-            font-size: 1.8em;
+            font-size: 1.6em;
             font-weight: bold;
             margin: 0;
             text-shadow:
@@ -109,7 +109,7 @@
         .user-info-area {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
 
         .balance-display {
@@ -121,13 +121,14 @@
 
         .signout-btn {
             background-color: #f44336 !important;
-            padding: 7px 12px !important;
-            font-size: 0.8em !important;
+            padding: 7px 10px !important;
+            font-size: 0.8em;
             box-shadow: none !important;
             border: none;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
+            color: white;
         }
 
         .profile-link {
@@ -139,8 +140,8 @@
         }
 
         #profile-icon-img {
-            width: 35px;
-            height: 35px;
+            width: 27px;
+            height: 27px;
             border-radius: 50%;
             object-fit: cover;
             border: 1px solid var(--border-color);
@@ -149,6 +150,57 @@
         }
 
         /* --- END Navbar Styles --- */
+        /* --- MEDIA QUERY for Small Mobile Screens --- */
+        @media (max-width: 768px) {
+            /* Styles within this block will ONLY apply to screens 480px wide or smaller */
+
+            .header-bar {
+                width: 100% !important;
+                padding: 10px 14px !important;
+            }
+
+            /* Example: Reduce header logo size */
+            .header-bar .logo-area {
+                font-size: 0.9em;
+                font-weight: 600;
+                line-height: 1.0;
+                letter-spacing: 0.03;
+            }
+
+            .signout-btn {
+                display: inline-block;
+                font-size: 9px !important;
+                font-weight: bold;
+                padding: 2px 3px;
+                border-radius: 4px;
+                line-height: 4px;
+                letter-spacing: 0.02;
+                min-width: 40px;
+                min-height: 22px;
+                width: 58px;
+                height: 22px;
+                margin-right: 3px;
+                margin-left: 2px;
+            }
+
+            /* Example: Make balance display smaller and less prominent */
+            .balance-display {
+                display: inline;
+                font-size: 10px;
+                font-weight: bold;
+                line-height: 1;
+                letter-spacing: 0.02;
+                /*    order: 0;  */
+                margin-right: 3px;
+                margin-left: 3px;
+                /* Change order to move it after the signout button/profile */
+            }
+
+
+
+
+
+        }
     </style>
 </head>
 
