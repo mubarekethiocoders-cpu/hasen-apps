@@ -52,18 +52,21 @@
 
         /* --- NEW Header Bar (Sticky/Fixed) --- */
         .header-bar {
+            /*  box-shadow: var(--shadow); */
+
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             background-color: #111122;
             padding: 10px 15px;
-            box-shadow: var(--shadow);
+            /*     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); */
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
             box-sizing: border-box;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .logo-area {
