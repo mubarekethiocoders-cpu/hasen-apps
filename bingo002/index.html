@@ -104,10 +104,10 @@
         }
 
         .signout-btn {
-            background-color: #f44336 !important;
-            padding: 7px 12px !important;
-            font-size: 0.8em !important;
-            box-shadow: none !important;
+            background-color: #f44336;
+            padding: 7px 12px;
+            font-size: 0.8em;
+            box-shadow: none;
         }
 
         /* --- Profile Image Style --- */
@@ -127,7 +127,7 @@
             object-fit: cover;
             border: 1px solid var(--border-color);
             display: block;
-            background: #444;
+            background: #001b94 !important;
             /* Fallback background while loading */
         }
 
@@ -244,6 +244,71 @@
             font-size: 1em;
             background-color: rgba(255, 255, 255, 0.95);
             color: #333;
+        }
+
+        /* --- MEDIA QUERY for Small Mobile Screens --- */
+        @media (max-width: 768px) {
+            /* Styles within this block will ONLY apply to screens 480px wide or smaller */
+
+            /* Example: Reduce header logo size */
+            .header-bar .logo-area {
+                font-size: 0.8em;
+                font-weight: 600;
+                line-height: 1.2;
+                letter-spacing: 0.02;
+            }
+
+            .signout-btn {
+                font-size: 0.7em;
+                font-weight: 500;
+                padding: 6px 9px;
+                line-height: 0.8;
+                letter-spacing: 0.02;
+                margin-right: 3px;
+                margin-left: 3px;
+            }
+
+            /* Example: Make balance display smaller and less prominent */
+            .balance-display {
+                font-size: 0.74em;
+                font-weight: 500;
+                line-height: 0.8;
+                letter-spacing: 0.02;
+                /*    order: 0;  */
+                margin-right: 3px;
+                margin-left: 3px;
+                /* Change order to move it after the signout button/profile */
+            }
+
+            .profile-link {
+                display: flex;
+                align-items: center;
+                text-decoration: none;
+                padding: 0;
+                margin-left: 3px;
+                margin-right: 3px;
+            }
+
+            #profile-icon-img {
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                object-fit: cover;
+                border: 0px solid var(--border-color);
+                display: block;
+                background: #001b94;
+                /* Fallback background while loading */
+            }
+
+            /* Example: Stack the 'Join Specific Game' section elements vertically if needed */
+            .content-card.join-by-id {
+                padding: 15px;
+                /* Reduce padding */
+            }
+
+            input[type="text"] {
+                font-size: 0.9em;
+            }
         }
     </style>
 </head>
