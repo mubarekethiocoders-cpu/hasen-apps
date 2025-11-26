@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>User Profile - Bingo Hub</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        :root {
+            --primary: #33aaff;
+            --secondary: #ffdd44;
+            --background-dark: #1a1a2e;
+            --background-medium: #1f4068;
+            --text-light: #e0e0e0;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            padding: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-container {
+            width: 90%;
+            max-width: 450px;
+            padding: 25px;
+            background-color: var(--background-medium);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: left;
+        }
+
+        .profile-detail {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        #profile-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px auto;
+            display: block;
+            border: 3px solid var(--primary);
+        }
+
+        button.logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            margin-top: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .back-link {
+            margin-top: 20px;
+            color: var(--primary);
+            text-decoration: none;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>👤 User Profile</h1>
+
+    <div class="profile-container">
+        <div id="profile-details">Loading profile data...</div>
+        <button class="logout-btn" onclick="window.logout()">Sign Out</button>
+    </div>
+
+    <a href="index.html" class="back-link">← Back to Lobby List</a>
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
