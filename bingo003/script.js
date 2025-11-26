@@ -518,7 +518,7 @@ function displayUserDetails(user) {
     // 2. Update Message Div (Body Content)
     messageEl.innerHTML = `
       <p style="margin-top:0; font-size: 1.1em; font-weight: 600;">
-          Welcome ${user.displayName}! Create a new game here or join one below.
+          Welcome<span style="color:darkorange;font-weight:bold" > ${user.displayName}! </span> Create a new game here or join one below.
       </p>
       <button class="create-game-body-btn" onclick="window.createGame()">
           Create Game 💰
